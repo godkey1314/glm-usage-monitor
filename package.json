@@ -1,0 +1,47 @@
+{
+  "name": "glm-usage-monitor",
+  "version": "1.0.0",
+  "description": "GLM Coding Plan 用量实时监控桌面小工具",
+  "main": "src/main.js",
+  "author": "godkey",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win portable",
+    "postinstall": "node scripts/copy-echarts.js"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.0.0",
+    "png-to-ico": "^3.0.1",
+    "sharp": "^0.35.1"
+  },
+  "dependencies": {
+    "echarts": "^5.5.0"
+  },
+  "build": {
+    "appId": "com.glm.usage-monitor",
+    "productName": "GLM用量监控",
+    "artifactName": "${productName}.${ext}",
+    "directories": {
+      "output": "build",
+      "buildResources": "assets"
+    },
+    "win": {
+      "icon": "assets/icon.ico",
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "files": [
+      "src/**/*",
+      "assets/**/*",
+      "package.json"
+    ]
+  }
+}

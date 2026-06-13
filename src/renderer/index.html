@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
+  <title>GLM 用量监控</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <!-- 顶栏 -->
+    <header class="topbar">
+      <div class="title"><span class="logo">📊</span> GLM 用量监控</div>
+      <div class="actions">
+        <span id="updatedAt" class="updated">尚未获取</span>
+        <button id="collapseBtn" class="btn-ghost" title="折叠到悬浮球">— 折叠</button>
+        <button id="settingsBtn" class="btn-ghost" title="设置 Token">⚙ 设置</button>
+        <button id="refreshBtn" class="btn-refresh" title="立即刷新（每 60 秒自动刷新）">
+          <span class="icon">↻</span><span>刷新</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- 错误提示 -->
+    <div id="errorBox" class="error-box hidden"></div>
+
+    <!-- 总览卡片 -->
+    <section class="cards">
+      <div class="card card-token">
+        <div class="card-label">总 Token</div>
+        <div class="card-value" id="totalTokens">—</div>
+        <div class="card-sub" id="tokenModels">—</div>
+      </div>
+      <div class="card card-calls">
+        <div class="card-label">调用次数</div>
+        <div class="card-value" id="totalCalls">—</div>
+        <div class="card-sub">近 25 小时</div>
+      </div>
+      <div class="card card-plan">
+        <div class="card-label">套餐等级</div>
+        <div class="card-value" id="planLevel">—</div>
+        <div class="card-sub">Coding Plan</div>
+      </div>
+      <div class="card card-mcp">
+        <div class="card-label">MCP 工具调用</div>
+        <div class="card-value" id="mcpTotal">—</div>
+        <div class="card-sub" id="mcpDetail">近 25 小时</div>
+      </div>
+    </section>
+
+    <!-- 图表区 -->
+    <section class="charts">
+      <div class="chart-card">
+        <div class="chart-title">📈 Token / 调用趋势（逐小时）</div>
+        <div id="trendChart" class="chart"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">📉 时段用量分布（Token）</div>
+        <div id="hourChart" class="chart"></div>
+      </div>
+    </section>
+
+    <!-- 配额 -->
+    <section class="quota">
+      <div class="section-title">⏱ 配额监控</div>
+      <div id="quotaGrid" class="quota-grid"></div>
+    </section>
+
+    <!-- 设置弹窗 -->
+    <div id="settingsModal" class="modal hidden">
+      <div class="modal-card">
+        <div class="modal-title">⚙ 设置</div>
+        <div class="modal-desc">填写你的 GLM Coding Plan Token。Token 仅保存在本机，不会上传到任何服务器。</div>
+        <label class="field-label">主题</label>
+        <select id="themeSelect" class="field">
+          <option value="light">浅色清爽</option>
+          <option value="glass">Apple 毛玻璃</option>
+        </select>
+        <label class="field-label">端点</label>
+        <select id="endpointSelect" class="field">
+          <option value="zhipu">智谱国内 (open.bigmodel.cn)</option>
+          <option value="zai">Z.ai 国际 (api.z.ai)</option>
+        </select>
+        <label class="field-label">Token（ANTHROPIC_AUTH_TOKEN）</label>
+        <input id="tokenInput" class="field" type="password" placeholder="粘贴你的 GLM Coding Plan Token" autocomplete="off">
+        <label class="checkbox"><input id="showToken" type="checkbox"> 显示 Token</label>
+        <div id="settingsError" class="settings-error hidden"></div>
+        <div class="modal-actions">
+          <button id="settingsCancel" class="btn-ghost">取消</button>
+          <button id="settingsSave" class="btn-refresh">保存并刷新</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="lib/echarts.min.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>GLM 用量监控 · 设计风格对比</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: #06060a; padding: 48px 20px 80px; -webkit-font-smoothing: antialiased;
+  }
+  h1 { color: #fff; text-align: center; font-size: 26px; font-weight: 600; }
+  .sub { color: #888; text-align: center; margin: 10px 0 50px; font-size: 14px; }
+
+  .style-block { max-width: 1000px; margin: 0 auto 56px; border-radius: 18px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06); }
+  .style-label {
+    color: #fff; padding: 16px 22px; font-size: 14px; background: rgba(255,255,255,0.03);
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;
+  }
+  .style-label b { font-size: 16px; }
+  .style-label .desc { color: #888; font-size: 12.5px; }
+  .swatches { display: inline-flex; gap: 6px; margin-left: 10px; }
+  .sw { width: 16px; height: 16px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); }
+  .mockup { padding: 26px; }
+
+  /* 主题配色 */
+  .t-linear { --bg:#0b0b0f; --card:#16161d; --border:#23232e; --accent:#8b5cf6; --track:#262238; --text:#e4e4e7; --dim:#8b8b96; --faint:#52525b; --radius:12px; --shadow:none; }
+  .t-light  { --bg:#f6f7f9; --card:#ffffff; --border:#ececf0; --accent:#6366f1; --track:#eef0f4; --text:#18181b; --dim:#71717a; --faint:#a1a1aa; --radius:14px; --shadow:0 1px 3px rgba(0,0,0,0.04),0 8px 24px rgba(0,0,0,0.04); }
+  .t-glass  { --bg:linear-gradient(135deg,#3b2a5a 0%,#1e2747 50%,#1a3a44 100%); --card:rgba(255,255,255,0.09); --border:rgba(255,255,255,0.14); --accent:#f0abfc; --track:rgba(255,255,255,0.1); --text:#f7f7fa; --dim:#c0c0cc; --faint:#9494a4; --radius:22px; --shadow:0 8px 32px rgba(0,0,0,0.2); }
+
+  .mockup { background: var(--bg); color: var(--text); }
+  .t-glass .mockup { backdrop-filter: blur(24px); }
+  .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; }
+  .ttl { font-size: 18px; font-weight: 600; letter-spacing: 0.2px; }
+  .refresh { padding: 8px 16px; background: var(--accent); color: #fff; border: none; border-radius: 9px; font-size: 13px; font-weight: 500; cursor: pointer; }
+
+  .cards { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 18px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow); }
+  .t-glass .card { backdrop-filter: blur(14px); }
+  .c-lbl { font-size: 11px; color: var(--dim); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.6px; }
+  .c-val { font-size: 28px; font-weight: 700; color: var(--accent); line-height: 1; }
+  .c-sub { font-size: 11px; color: var(--faint); margin-top: 8px; }
+
+  .charts { display: grid; grid-template-columns: 1.5fr 1fr; gap: 14px; margin-bottom: 18px; }
+  .chart-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; box-shadow: var(--shadow); }
+  .ch-ttl { font-size: 12px; color: var(--dim); margin-bottom: 8px; font-weight: 500; }
+
+  .qgrid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+  .qcard { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; text-align: center; box-shadow: var(--shadow); }
+  .q-lbl { font-size: 12px; color: var(--dim); margin-bottom: 10px; }
+  .ring { width: 96px; height: 96px; margin: 0 auto; position: relative; }
+  .ring-val { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 19px; font-weight: 700; color: var(--accent); }
+  .q-info { font-size: 11px; color: var(--faint); margin-top: 8px; }
+</style>
+</head>
+<body>
+<h1>GLM 用量监控 · 设计风格对比</h1>
+<div class="sub">同样的数据（62.4M / 517 / MAX / 7），三种设计语言。你挑一种，我照着重做整个界面。</div>
+
+<!-- ============ ① Linear 风 ============ -->
+<div class="style-block">
+  <div class="style-label">
+    <span><b>① Linear 风</b><span class="swatches"><i class="sw" style="background:#0b0b0f"></i><i class="sw" style="background:#16161d"></i><i class="sw" style="background:#8b5cf6"></i></span></span>
+    <span class="desc">深色极简 · 单一紫色强调 · 克制不花哨 · 开发者工具标杆</span>
+  </div>
+  <div class="mockup t-linear">
+    <div class="topbar"><div class="ttl">GLM 用量监控</div><button class="refresh">↻ 刷新</button></div>
+    <div class="cards">
+      <div class="card"><div class="c-lbl">总 Token</div><div class="c-val">62.4M</div><div class="c-sub">5.2 · 4.6V · Air</div></div>
+      <div class="card"><div class="c-lbl">调用次数</div><div class="c-val">517</div><div class="c-sub">近 25 小时</div></div>
+      <div class="card"><div class="c-lbl">套餐</div><div class="c-val">MAX</div><div class="c-sub">Coding Plan</div></div>
+      <div class="card"><div class="c-lbl">MCP 调用</div><div class="c-val">7</div><div class="c-sub">搜索 5 · 读取 2</div></div>
+    </div>
+    <div class="charts">
+      <div class="chart-card"><div class="ch-ttl">📈 Token / 调用趋势</div>
+        <svg viewBox="0 0 420 130" width="100%" height="120"><defs><linearGradient id="a1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8b5cf6" stop-opacity="0.45"/><stop offset="1" stop-color="#8b5cf6" stop-opacity="0"/></linearGradient></defs><path d="M0,115 L60,110 L120,100 L180,88 L240,60 L300,38 L360,22 L420,12 L420,130 L0,130 Z" fill="url(#a1)"/><path d="M0,115 L60,110 L120,100 L180,88 L240,60 L300,38 L360,22 L420,12" fill="none" stroke="#a78bfa" stroke-width="2.2"/></svg>
+      </div>
+      <div class="chart-card"><div class="ch-ttl">📉 时段用量</div>
+        <svg viewBox="0 0 220 120" width="100%" height="120"><g fill="#8b5cf6"><rect x="10" y="98" width="16" height="18" rx="2" opacity="0.5"/><rect x="34" y="90" width="16" height="26" rx="2" opacity="0.6"/><rect x="58" y="74" width="16" height="42" rx="2" opacity="0.72"/><rect x="82" y="52" width="16" height="64" rx="2" opacity="0.86"/><rect x="106" y="24" width="16" height="92" rx="2"/><rect x="130" y="36" width="16" height="80" rx="2" opacity="0.95"/><rect x="154" y="64" width="16" height="52" rx="2" opacity="0.7"/><rect x="178" y="82" width="16" height="34" rx="2" opacity="0.58"/></g></svg>
+      </div>
+    </div>
+    <div class="qgrid">
+      <div class="qcard"><div class="q-lbl">Token · 5h</div><div class="ring"><svg viewBox="0 0 100 100" width="96" height="96"><circle cx="50" cy="50" r="42" fill="none" stroke="var(--track)" stroke-width="8"/><circle cx="50" cy="50" r="42" fill="none" stroke="#8b5cf6" stroke-width="8" stroke-linecap="round" stroke-dasharray="84.4 263.9" transform="rotate(-90 50 50)"/></svg><div class="ring-val">32%</div></div><div class="q-info">7h 后重置</div></div>
+      <div class="qcard"><div class="q-lbl">Token · 周</div><div class="ring"><svg viewBox="0 0 100 100" width="96" height="96"><circle cx="50" cy="50" r="42" fill="none" stroke="var(--track)" stroke-width="8"/><circle cx="50" cy="50" r="42" fill="none" stroke="#8b5cf6" stroke-width="8" stroke-linecap="round" stroke-dasharray="15.8 263.9" transform="rotate(-90 50 50)"/></svg><div class="ring-val">6%</div></div><div class="q-info">5 天后重置</div></div>
+      <div class="qcard"><div class="q-lbl">MCP · 月</div><div class="ring"><svg viewBox="0 0 100 100" width="96" height="96"><circle cx="50" cy="50" r="42" fill="none" stroke="var(--track)" stroke-width="8"/><circle cx="50" cy="50" r="42" fill="none" stroke="#8b5cf6" stroke-width="8" stroke-linecap="round" stroke-dasharray="2.6 263.9" transform="rotate(-90 50 50)"/></svg><div class="ring-val">1%</div></div><div class="q-info">7 / 4000</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ② 浅色清爽 ============ -->
+<div class="style-block">
+  <div class="style-label">
+    <span><b>② 浅色清爽</b><span class="swatches"><i class="sw" style="background:#f6f7f9"></i><i class="sw" style="background:#ffffff"></i><i class="sw" style="background:#6366f1"></i></span></span>
+    <span class="desc">白底浅灰 · 柔和阴影 · 清爽专业 · 像 Stripe / Notion 仪表盘</span>
+  </div>
+  <div class="mockup t-light">
+    <div class="topbar"><div class="ttl">GLM 用量监控</div><button class="refresh">↻ 刷新</button></div>
+    <div class="cards">
+      <div class="card"><div class="c-lbl">总 Token</div><div class="c-val">62.4M</div><div class="c-sub">5.2 · 4.6V · Air</div></div>
+      <div class="card"><div class="c-lbl">调用次数</div><div class="c-val">517</div><div class="c-sub">近 25 小时</div></div>
+      <div class="card"><div class="c-lbl">套餐</div><div class="c-val">MAX</div><div class="c-sub">Coding Plan</div></div>
+      <div class="card"><div class="c-lbl">MCP 调用</div><div class="c-val">7</div><div class="c-sub">搜索 5 · 读取 2</div></div>
+    </div>
+    <div class="charts">
+      <div class="chart-card"><div class="ch-ttl">📈 Token / 调用趋势</div>
+        <svg viewBox="0 0 420 130" width="100%" height="120"><defs><linearGradient id="a2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6366f1" stop-opacity="0.3"/><stop offset="1" stop-color="#6366f1" stop-opacity="0"/></linearGradient></defs><path d="M0,115 L60,110 L120,100 L180,88 L240,60 L300,38 L360,22 L420,12 L420,130 L0,130 Z" fill="url(#a2)"/><path d="M0,115 L60,110 L120,100 L180,88 L240,60 L300,38 L360,22 L420,12" fill="none" stroke="#6366f1" stroke-width="2.4"/></svg>
+      </div>
+      <div class="chart-card"><div class="ch-ttl">📉 时段用量</div>
+        <svg viewBox="0 0 220 120" width="100%" height="120"><g fill="#6366f1"><rect x="10" y="98" width="16" height="18" rx="3" opacity="0.45"/><rect x="34" y="90" width="16" height="26" rx="3" opacity="0.55"/><rect x="58" y="74" width="16" height="42" rx="3" opacity="0.68"/><rect x="82" y="52" width="16" height="64" rx="3" opacity="0.82"/><rect x="106" y="24" width="16" height="92" rx="3"/><rect x="130" y="36" width="16" height="80" rx="3" opacity="0.9"/><rect x="154" y="64" width="16" height="52" rx="3" opacity="0.66"/><rect x="178" y="82" width="16" height="34" rx="3" opacity="0.52"/></g></svg>
+      </div>
+    </div>
+    <div class="qgrid">
+      <div class="qcard"><div class="q-lbl">Token · 5h</div><div class="ring"><svg viewBox="0 0 100 100" width="96" height="96"><circle cx="50" cy="50" r="42" fill="none" stroke="var(--track)" stroke-width="8"/><circle cx="50" cy="50" r="42" fill="none" stroke="#6366f1" stroke-width="8" stroke-linecap="round" stroke-dasharray="84.4 263.9" transform="rotate(-90 50 50)"/></svg><div class="ring-val">32%</div></div><div class="q-info">7h 后重置</div></div>
+      <div class="qcard"><div class="q-lbl">Token · 周</div><div class="ring"><svg viewBox="0 0 100 100" width="96" height="96"><circle cx="50" cy="50" r="42" fill="none" stroke="var(--track)" stroke-width="8"/><circle cx="50" cy="50" r="42" fill="none" stroke="#6366f1" stroke-width="8" stroke-linecap="round" stroke-dasharray="15.8 263.9" transform="rotate(-90 50 50)"/></svg><div class="ring-val">6%</div></div><div class="q-info">5 天后重置</div></div>
+      <div class="qcard"><div class="q-lbl">MCP · 月</div><div class="ring"><svg viewBox="0 0 100 100" width="96" height="96"><circle cx="50" cy="50" r="42" fill="none" stroke="var(--track)" stroke-width="8"/><circle cx="50" cy="50" r="42" fill="none" stroke="#6366f1" stroke-width="8" stroke-linecap="round" stroke-dasharray="2.6 263.9" transform="rotate(-90 50 50)"/></svg><div class="ring-val">1%</div></div><div class="q-info">7 / 4000</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ③ Apple 毛玻璃 ============ -->
+<div class="style-block">
+  <div class="style-label">
+    <span><b>③ Apple 毛玻璃</b><span class="swatches"><i class="sw" style="background:linear-gradient(135deg,#3b2a5a,#1e2747)"></i><i class="sw" style="background:rgba(255,255,255,0.15)"></i><i class="sw" style="background:#f0abfc"></i></span></span>
+    <span class="desc">柔和渐变 · 大圆角半透 · 圆润优雅 · 高级感</span>
+  </div>
+  <div class="mockup t-glass">
+    <div class="topbar"><div class="ttl">GLM 用量监控</div><button class="refresh">↻ 刷新</button></div>
+    <div class="cards">
+      <div class="card"><div class="c-lbl">总 Token</div><div class="c-val">62.4M</div><div class="c-sub">5.2 · 4.6V · Air</div></div>
+      <div class="card"><div class="c-lbl">调用次数</div><div class="c-val">517</div><div class="c-sub">近 25 小时</div></div>
+      <div class="card"><div class="c-lbl">套餐</div><div class="c-val">MAX</div><div class="c-sub">Coding Plan</div></div>
+      <div class="card"><div class="c-lbl">MCP 调用</div><div class="c-val">7</div><div class="c-sub">搜索 5 · 读取 2</div></div>
+    </div>
+    <div class="charts">
+      <div class="chart-card"><div class="ch-ttl">📈 Token / 调用趋势</div>
+        <svg viewBox="0 0 420 130" width="100%" height="120"><defs><linearGradient id="a3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f0abfc" stop-opacity="0.5"/><stop offset="1" stop-color="#f0abfc" stop-opacity="0"/></linearGradient></defs><path d="M0,115 L60,110 L120,100 L180,88 L240,60 L300,38 L360,22 L420,12 L420,130 L0,130 Z" fill="url(#a3)"/><path d="M0,115 L60,110 L120,100 L180,88 L240,60 L300,38 L360,22 L420,12" fill="none" stroke="#f0abfc" stroke-width="2.4"/></svg>
+      </div>
+      <div class="chart-card"><div class="ch-ttl">📉 时段用量</div>
+        <svg viewBox="0 0 220 120" width="100%" height="120"><g fill="#f0abfc"><rect x="10" y="98" width="16" height="18" rx="8" opacity="0.5"/><rect x="34" y="90" width="16" height="26" rx="8" opacity="0.6"/><rect x="58" y="74" width="16" height="42" rx="8" opacity="0.72"/><rect x="82" y="52" width="16" height="64" rx="8" opacity="0.86"/><rect x="106" y="24" width="16" height="92" rx="8"/><rect x="130" y="36" width="16" height="80" rx="8" opacity="0.95"/><rect x="154" y="64" width="16" height="52" rx="8" opacity="0.7"/><rect x="178" y="82" width="16" height="34" rx="8" opacity="0.58"/></g></svg>
+      </div>
+    </div>
+    <div class="qgrid">
+      <div class="qcard"><div class="q-lbl">Token · 5h</div><div class="ring"><svg viewBox="0 0 100 100" width="96" height="96"><circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="9"/><circle cx="50" cy="50" r="42" fill="none" stroke="#f0abfc" stroke-width="9" stroke-linecap="round" stroke-dasharray="84.4 263.9" transform="rotate(-90 50 50)"/></svg><div class="ring-val">32%</div></div><div class="q-info">7h 后重置</div></div>
+      <div class="qcard"><div class="q-lbl">Token · 周</div><div class="ring"><svg viewBox="0 0 100 100" width="96" height="96"><circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="9"/><circle cx="50" cy="50" r="42" fill="none" stroke="#f0abfc" stroke-width="9" stroke-linecap="round" stroke-dasharray="15.8 263.9" transform="rotate(-90 50 50)"/></svg><div class="ring-val">6%</div></div><div class="q-info">5 天后重置</div></div>
+      <div class="qcard"><div class="q-lbl">MCP · 月</div><div class="ring"><svg viewBox="0 0 100 100" width="96" height="96"><circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="9"/><circle cx="50" cy="50" r="42" fill="none" stroke="#f0abfc" stroke-width="9" stroke-linecap="round" stroke-dasharray="2.6 263.9" transform="rotate(-90 50 50)"/></svg><div class="ring-val">1%</div></div><div class="q-info">7 / 4000</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="sub" style="margin-top:40px">看完告诉我编号（①②③），或指出哪里要调（配色/圆角/密度），我据此重做正式界面。</div>
+</body>
+</html>
