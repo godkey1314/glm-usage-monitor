@@ -33,13 +33,16 @@ function readConfig() {
 }
 
 function writeConfig(cfg) {
-  const endpoint = ENDPOINTS[cfg && cfg.endpoint] ? cfg.endpoint : 'zhipu';
   const prev = readConfig();
+  const endpoint = ENDPOINTS[cfg && cfg.endpoint] ? cfg.endpoint : prev.endpoint;
   const theme = THEMES.indexOf(cfg && cfg.theme) !== -1 ? cfg.theme : prev.theme;
-  const data = { token: (cfg && cfg.token) || '', endpoint, ballPosition: prev.ballPosition, theme };
+  // 关键：未提供 token 时保留旧值，绝不能存空——否则 fetchAndBroadcast 判 needConfig
+  // 会重新 openSettings，导致"点了关闭又被自动撕开"
+  const token = (cfg && cfg.token) ? cfg.token : prev.token;
+  const data = { token, endpoint, ballPosition: prev.ballPosition, theme };
   fs.writeFileSync(configPath(), JSON.stringify(data, null, 2), 'utf8');
   const ep = ENDPOINTS[endpoint];
-  return { token: data.token, endpoint, baseUrl: ep.baseUrl, theme };
+  return { token, endpoint, baseUrl: ep.baseUrl, theme };
 }
 
 function setBallPosition(x, y) {

@@ -112,6 +112,8 @@ html, body {
 .error-box { background: rgba(248,113,113,0.12); border: 1px solid rgba(248,113,113,0.35); color: #fca5a5; padding: 10px 16px; border-radius: 12px; font-size: 13px; margin-bottom: 14px; }
 [data-theme="light"] .error-box { color: #dc2626; }
 .hidden { display: none; }
+/* 特异性须高于 .modal 的 display:flex，否则设置弹窗关不掉（曾踩过的坑）*/
+.modal.hidden { display: none; }
 
 /* ---------- 设置弹窗 ---------- */
 .modal { position: fixed; inset: 0; background: rgba(8,12,24,0.55); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 100; }
