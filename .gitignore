@@ -17,3 +17,6 @@ Thumbs.db
 # 编辑器
 .vscode/
 .idea/
+
+# AI 开发日志（内部记录，不进开源仓库）
+doc/09-AI开发日志/

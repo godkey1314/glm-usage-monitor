@@ -2,9 +2,9 @@
 
 实时监控 **GLM Coding Plan** 配额与用量的开源桌面小工具（Windows）。
 
-![Apple 毛玻璃主题](docs/screenshot-glass.png)
+![界面预览](doc/screenshot-1.png)
 
-![浅色清爽主题](docs/screenshot-light.png)
+![界面预览](doc/screenshot-2.png)
 
 > 任何购买了智谱 / Z.ai GLM Coding Plan 的用户，填入自己的 Token 即可使用——**不依赖 Claude Code，不读取任何本地配置文件**。
 
