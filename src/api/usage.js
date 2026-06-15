@@ -59,6 +59,9 @@ function normalize(modelRes, toolRes, quotaRes) {
   const modelTotal = model.totalUsage || {};
   const toolTotal = tool.totalUsage || {};
 
+  // 各模型 Token 明细。total.tokens 必须与之同源同口径（取其求和）。
+  const modelSummary = (modelTotal.modelSummaryList || []).map((m) => ({ name: m.modelName, tokens: m.totalTokens || 0 }));
+
   const limits = (quota.limits || []).map((l) => {
     const window = describeWindow(l.unit, l.number);
     const item = {
@@ -85,8 +88,11 @@ function normalize(modelRes, toolRes, quotaRes) {
       byModelData: (model.modelDataList || []).map((m) => ({ name: m.modelName, tokens: m.tokensUsage || [] })),
       total: {
         calls: modelTotal.totalModelCallCount || 0,
-        tokens: modelTotal.totalTokensUsage || 0,
-        byModel: (modelTotal.modelSummaryList || []).map((m) => ({ name: m.modelName, tokens: m.totalTokens }))
+        // 总 Token = 各模型明细之和，与 byModel 同源同口径，保证 ≥ 任一单模型。
+        // 注：totalUsage.totalTokensUsage 字段口径不同（实测 389M < 单模型 GLM-5.2 的 685M），
+        // 直接用作"总 Token"会与下方模型明细自相矛盾，故弃用。
+        tokens: modelSummary.reduce((sum, m) => sum + (m.tokens || 0), 0),
+        byModel: modelSummary
       }
     },
     tool: {
